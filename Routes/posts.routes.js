@@ -1,6 +1,7 @@
 const router = require("express").Router()
 const db = require('../db')
 
+//* FOR GETTING ALL ALL POSTS
 router.route('/').get(async(req, res) => {
   try{
 
@@ -28,7 +29,7 @@ router.route('/').get(async(req, res) => {
 })
 
 
-
+//* ADDING POST
 router.route('/add').post(async(req, res) => {
   const userName = req.body.userName;
   const title = req.body.title;
@@ -39,8 +40,6 @@ router.route('/add').post(async(req, res) => {
   console.log(req.body)
 
   try{
-
-    
     const response = await db.query('INSERT INTO posts(username, title, content, subreddit, createdat) VALUES ($1,$2,$3,$4,$5) returning *', [userName,title,content,subreddit,createdAt])
     
     res.status(200).json(
@@ -60,6 +59,7 @@ router.route('/add').post(async(req, res) => {
 
 })
 
+//* GET A SINGLE POST
 router.route('/:postID').get(async(req, res) => {
   const postID = req.params.postID
   try{
@@ -68,7 +68,7 @@ router.route('/:postID').get(async(req, res) => {
       {
         status: "Success",
         data: {
-          post: post.row[0] 
+          post: post.rows[0] 
         }
       }
     )

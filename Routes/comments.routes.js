@@ -1,14 +1,15 @@
 const router = require('express').Router()
 const db = require('../db')
 
-router.route('/:postID').post(async(req,res) => {
+//* ADD COMMENTS
+router.route('/add').post(async(req,res) => {
   const postID = req.body.postID
-  const username = req.body.username
+  const username = req.body.userName
   const content = req.body.content
   const createdAt = new Date()
 
   try{
-    const createComment = await db.query('INSERT INTO comments (username,content,postid,createdAt) VALUES ($1,$2,$3,$4)', [username, content, postID,createdAt ])
+    const createComment = await db.query('INSERT INTO comments (username,content,parent_postid,createdAt) VALUES ($1,$2,$3,$4) returning *', [username, content, postID,createdAt ])
     
     res.status(200).json(
       {
@@ -30,6 +31,7 @@ router.route('/:postID').post(async(req,res) => {
 })
 
 
+//* GET ALL COMMENTS FOR A SINGLE POST
 router.route('/:postID').get(async(req,res) => {
   const postID = req.params.postID
 
@@ -57,6 +59,7 @@ router.route('/:postID').get(async(req,res) => {
   }
 })
 
+//* UPDATE A SINGLE COMMENT
 router.route('/:commentID/update').put(async(req,res) => {
   const commentID = req.params.commentID
   const content = req.body.content
