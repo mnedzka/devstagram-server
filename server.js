@@ -11,11 +11,12 @@ app.use(express.json())
 const postRoutes = require("./Routes/posts.routes")
 const subredditsRoutes = require('./Routes/subreddits.routes')
 const commentRoutes = require("./Routes/comments.routes")
-// const likeRoutes = require("./Routes/likes.routes")
+const likeRoutes = require("./Routes/likes.routes")
 
 app.use("/posts", postRoutes)
 app.use('/subreddits', subredditsRoutes)
 app.use('/comments', commentRoutes)
+app.use('/likes', likeRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {

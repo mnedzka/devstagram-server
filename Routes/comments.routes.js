@@ -39,7 +39,8 @@ router.route('/:postID').get(async(req,res) => {
     const comments = await db.query(`SELECT comments.content, comments.username,comments.createdat, comments.comment_id 
                                     FROM comments 
                                     JOIN posts ON posts.postid = comments.parent_postid 
-                                    WHERE posts.postid = $1`, [postID])
+                                    WHERE posts.postid = $1
+                                    ORDER BY createdat DESC`, [postID])
     res.status(200).json(
       {
         status: "Success",
@@ -60,7 +61,7 @@ router.route('/:postID').get(async(req,res) => {
 })
 
 //* UPDATE A SINGLE COMMENT
-router.route('/:commentID/update').put(async(req,res) => {
+router.route('/:commentID').put(async(req,res) => {
   const commentID = req.params.commentID
   const content = req.body.content
   try{
@@ -82,6 +83,29 @@ router.route('/:commentID/update').put(async(req,res) => {
       }
     )
   }
+})
+
+//* DELETE A COMMENT
+router.route('/:commentID').delete(async(req, res) => {
+  const commentID = req.params.commentID
+
+  try{
+    
+    const deleteComment = await db.query('DELETE FROM comments WHERE comment_id = $1', [commentID])
+    res.status(200).json({
+      status: "Success",
+      message: "Comment deleted successfully"
+    })
+  
+  } catch(err) {
+    res.status(400).json(
+      {
+        status: "Error",
+        message: err.message
+      }
+    )
+  }
+
 })
 
 module.exports = router

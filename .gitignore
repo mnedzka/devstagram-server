@@ -9,6 +9,7 @@
 /build
 
 .env
+db.sql
 
 # misc
 .DS_Store

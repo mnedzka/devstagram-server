@@ -28,6 +28,31 @@ router.route('/').get(async(req, res) => {
   
 })
 
+//* POSTS FROM ONE SUBREDDIT
+router.route('/subreddit/:subreddits').get(async(req, res) => {
+  const subreddits = req.params.subreddits
+  console.log(subreddits)
+
+  try{
+    const posts = await db.query('SELECT * FROM posts WHERE subreddit ILIKE $1 ORDER BY createdat DESC', [ subreddits ])
+    res.status(200).json(
+      {
+        status: 'Success',
+        data: {
+          numOfResults: posts.rows.length,
+          posts: posts.rows
+        }
+      }
+    )
+  } catch(err) {
+    res.status(400).json(
+      {
+        status: "Error",
+        messageL: err.message
+      }
+    )
+  }
+})
 
 //* ADDING POST
 router.route('/add').post(async(req, res) => {
