@@ -1,8 +1,11 @@
 CREATE TABLE users (
-  uid INT,
+  uid INT ,
   username VARCHAR(25) PRIMARY KEY,
-  bio VARCHAR(100)
+  followed_subreddits TEXT[]
 );
+
+-- FOR INSERTING ARRAY INTO TABLE
+
 
 
 //CREATED TABLE
