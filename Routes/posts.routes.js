@@ -97,4 +97,33 @@ router.route("/:postID").get(async (req, res) => {
   }
 });
 
+router.route('/feed/:username').get(async(req, res) => {
+  const username = req.params.username
+
+  try{
+    const feedPosts = await db.query(`SELECT posts.postid, posts.username, posts.content, posts.title, posts.subreddit, posts.createdat, users.uid FROM posts, users
+                                      WHERE posts.subreddit = ANY(users.followed_subreddits)
+                                      AND users.username = $1
+                                      ORDER BY createdat DESC`, [username])
+                                      
+  
+    res.status(200).json(
+      {
+        status: 'Success',
+        data: {
+          posts: feedPosts.rows
+        }
+      }
+    )
+  
+  } catch (err) {
+    res.status(400).json(
+      {
+        status: 'Something went wrong',
+        message: err.message
+      }
+    )
+  }
+})
+
 module.exports = router;

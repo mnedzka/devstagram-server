@@ -20,6 +20,8 @@ router.route('/').get(async(req, res) => {
   }
 })
 
+
+
 router.route('/:subreddit').get(async(req, res) => {
   const subreddit = req.params.subreddit
 
