@@ -37,7 +37,7 @@ router.route('/follow/subreddit').post(async(req, res) => {
 
   try{
     const followSubreddit = await db.query('UPDATE users SET followed_subreddits = array_append(followed_subreddits , $1) WHERE username = $2', [subreddit, username])
-
+    const addToSubreddits = await db.query('UPDATE subreddits SET followed_by = array_append(followed_by, $1) WHERE subreddit = $2', [ username, subreddit ])
     res.status(200).json(
       {
         status: 'Success'
@@ -52,5 +52,29 @@ router.route('/follow/subreddit').post(async(req, res) => {
     )
   }
 })
+
+router.route('/unfollow/subreddit').post(async(req, res) => {
+  const subreddit = req.body.subreddit
+  const username = req.body.username
+
+  try{
+    const unFollowSubreddit = await db.query('UPDATE users SET followed_subreddits = array_remove(followed_subreddits , $1) WHERE username = $2', [subreddit, username])
+    const removeFromSubreddits = await db.query('UPDATE subreddits SET followed_by = array_remove(followed_by, $1) WHERE subreddit = $2', [ username, subreddit ])
+    res.status(200).json(
+      {
+        status: 'Success'
+      }
+    )
+  } catch(err) {
+    res.status(400).json(
+      {
+        status: 'Something went wrong',
+        message: err.message
+      }
+    )
+  }
+})
+
+
 
 module.exports = router 
