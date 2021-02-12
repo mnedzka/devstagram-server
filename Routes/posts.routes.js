@@ -25,7 +25,6 @@ router.route("/").get(async (req, res) => {
 //* POSTS FROM ONE SUBREDDIT
 router.route("/subreddit/:subreddits").get(async (req, res) => {
   const subreddits = req.params.subreddits;
-  console.log(subreddits);
 
   try {
     const posts = await db.query(
@@ -74,6 +73,56 @@ router.route("/add").post(async (req, res) => {
   }
 });
 
+//* DELETE POST
+router.route('/delete/:postID').delete(async(req, res) => {
+  const postID = req.params.postID
+
+  try{
+    const deleteLikes = await db.query('DELETE FROM likes WHERE parent_postid = $1', [postID])
+    const deleteComments = await db.query('DELETE FROM comments WHERE parent_postid = $1', [postID])
+    const deletePost = await db.query('DELETE FROM posts WHERE postID = $1', [postID])
+    res.status(200).json(
+      {
+        status: 'Success',
+        message: 'Post deleted successfully'
+      }
+    )
+  } catch(err) {
+    res.status(400).json(
+      {
+        status: 'Failed',
+        message: err.message
+      }
+    )
+  }
+})
+
+//* UPDATE POST
+router.route('/update/:postID').put(async(req, res) => {
+  const postID = req.params.postID
+  const content = req.body.content
+  try{
+    const update = await db.query('UPDATE posts SET content = $1 WHERE postID = $2', [content, postID])
+
+    res.status(200).json(
+      {
+        status: 'Success',
+        message: 'Post Edited successfullly',
+        content: update.rows
+      }
+    )
+
+
+  } catch(err) {
+    res.status(400).json(
+      {
+        status: 'Failed kar gaya bsdk',
+        message: err.message
+      }
+    )
+  }
+})
+
 //* GET A SINGLE POST
 router.route("/:postID").get(async (req, res) => {
   const postID = req.params.postID;
@@ -97,6 +146,7 @@ router.route("/:postID").get(async (req, res) => {
   }
 });
 
+//* POSTS FROM A SINGLE PERSON
 router.route('/feed/:username').get(async(req, res) => {
   const username = req.params.username
 

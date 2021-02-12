@@ -11,7 +11,6 @@ router.route('/create').post(async(req,res) => {
   const uid = req.body.uid
   const username = req.body.userName
 
-  console.log(uid, username)  
 
   try{
     const addUser = await db.query('INSERT INTO users(uid, username) VALUES ($1,$2)', [uid, username])
@@ -72,6 +71,28 @@ router.route('/unfollow/subreddit').post(async(req, res) => {
         message: err.message
       }
     )
+  }
+})
+
+
+router.route('/:username').get(async(req , res) => {
+  const username = req.params.username
+  console.log(username)
+
+  try{
+    const getData = await db.query('SELECT * FROM posts WHERE posts.username = $1 ORDER BY createdAt DESC', [username])
+    res.status(200).json(
+      {
+        status: "Success",
+        data: {
+          numOfRows: getData.rows.length,
+          posts: getData.rows
+        }
+      }
+    )
+    console.log(getData.rows)
+  } catch(err){
+    console.log(err)
   }
 })
 
